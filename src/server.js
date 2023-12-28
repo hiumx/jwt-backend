@@ -1,5 +1,6 @@
 import express from "express";
-import 'dotenv/config'
+import 'dotenv/config';
+import methodOverride from 'method-override';
 
 import configViewEngine from "./config/viewEngine";
 import webRoutes from "./routes/web/web";
@@ -15,6 +16,8 @@ app.use(express.urlencoded({
 }));
 
 app.use(express.json());
+
+app.use(methodOverride('_method'));
 
 configViewEngine(app);
 

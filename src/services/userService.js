@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
-import connectDB from '../config/db';
-import mysql from 'mysql2/promise';
+import db from '../db/models'
+import { DOUBLE } from 'sequelize';
 
 
 function hashPassword(password) {
@@ -10,24 +10,39 @@ function hashPassword(password) {
 }
 
 export async function createNewUser(username, password, email) {
-    const connection = await mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        database: 'jwt-backend'
-      });
     const hashedPassword = hashPassword(password);
-    await connection.execute(
-        'INSERT INTO `users` (username, password, email) VALUES (?, ?, ?)',
-        [username, hashedPassword, email]
-    )
+    await db.User.create({
+        username,
+        password: hashedPassword,
+        email
+    })
 }
 
 export async function getAllUsers() {
-    const connection = await mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        database: 'jwt-backend'
-      });
-    const [results, fields] =  await connection.execute('SELECT * FROM `users`');
-    return results;
+    return await db.User.findAll();
+}
+
+export async function getUserById(id) {
+    return await db.User.findAll({
+        raw: true,
+        where: {
+            id
+        }
+    })
+}
+
+export async function updateUser(dataUpdate, id) {
+    await db.User.update(dataUpdate, {
+        where: {
+            id
+        }
+    })
+}
+
+export async function deleteUser(id) {
+    await db.User.destroy({
+        where: {
+            id
+        }
+    });
 }
