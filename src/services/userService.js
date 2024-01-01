@@ -1,7 +1,5 @@
 import bcrypt from 'bcrypt';
 import db from '../db/models'
-import { DOUBLE } from 'sequelize';
-
 
 function hashPassword(password) {
     const saltRounds = 10;
@@ -19,7 +17,12 @@ export async function createNewUser(username, password, email) {
 }
 
 export async function getAllUsers() {
-    return await db.User.findAll();
+    return await db.User.findAll({
+        raw: true,
+        // subQuery: false,
+        // attributes: ['username', 'password', 'email'],
+        include: db.Group_User
+    });
 }
 
 export async function getUserById(id) {
