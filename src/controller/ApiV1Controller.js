@@ -7,10 +7,31 @@ export function getApiTest(req, res) {
     })
 }
 
-export function create(req, res) {
-    apiService.createNewUser(req.body)
-    res.status(201).json({
-        statusMessage: "Create successfully"
-    })
+export async function create(req, res) {
+    try {
+        const { email, phone, username, password } = req.body;
+
+        if (!email || !phone || !username || !password) {
+            res.status(422).json({
+                SM: 'Missing parameter',
+                SC: -1,
+                DT: ''
+            });
+        }
+
+        const resData = await apiService.registerNewUser(req.body);
+        
+        res.json({
+            responseMessage: resData.message,
+            responseCode: resData.code,
+            responseData: resData.data
+        })
+    } catch (error) {
+        return {
+            message: 'Something wrong from server...',
+            code: -1,
+            data: ''
+        }
+    }
 }
 

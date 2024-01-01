@@ -12,7 +12,6 @@ export function store(req, res) {
 
 export async function manager(req, res) {
     const listUsers = await userService.getAllUsers();
-    console.log(listUsers)
     res.render('users/manager', { listUsers });
 }
 
