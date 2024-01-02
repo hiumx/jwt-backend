@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import db from '../db/models';
+import { Op } from 'sequelize';
 
 function hashPassword(password) {
     const saltRounds = 10;
@@ -88,7 +89,45 @@ export async function registerNewUser(data) {
             code: -1,
             data: ''
         }
-        
+
     }
 
+}
+
+export async function userLogin(data) {
+
+    const userInstance = await db.User.findOne({
+        where: {
+            [Op.or]: [
+                { email: data.keyLogin },
+                { phone: data.keyLogin }
+            ]
+        },
+        raw: true
+    });
+
+
+    if (!userInstance) {
+        return {
+            message: 'Email or phone does not exist',
+            code: -1,
+            data: ''
+        }
+    }
+
+    const isMatch = bcrypt.compareSync(data.password, userInstance.password);
+
+    if (!isMatch) {
+        return {
+            message: 'Password incorrect!',
+            code: -1,
+            data: ''
+        }
+    }
+
+    return {
+        message: 'Login successfully',
+        code: 0,
+        data: ''
+    }
 }
