@@ -131,3 +131,110 @@ export async function userLogin(data) {
         data: ''
     }
 }
+
+export async function getUsers({ page, limit }) {
+    try {
+        let res = {};
+        if (page && limit) {
+            const offset = (page - 1) * limit;
+            res = await db.User.findAndCountAll({
+                raw: true,
+                include: db.Group_User,
+                attributes: { exclude: ['password'] },
+                offset: +offset,
+                limit: +limit,
+            });
+        } else {
+            res = await db.User.findAll({
+                raw: true,
+                include: db.Group_User,
+                attributes: { exclude: ['password'] }
+            });
+        }
+
+        return {
+            message: 'Get all users successfully',
+            code: 0,
+            data: res
+        }
+    } catch (error) {
+        console.log(error);
+        return {
+            message: 'Something wrong from server!',
+            code: -2,
+            data: ''
+        }
+    }
+
+}
+
+export async function createUser({ email, phone, username, address, password, gender, groupId }) {
+    try {
+        const hashedPassword = hashPassword(password);
+        const resData = await db.User.create({
+            email,
+            phone,
+            username,
+            address,
+            password: hashedPassword,
+            gender,
+            groupId
+        })
+        return {
+            message: 'Created user successfully',
+            code: 0,
+            data: resData.toJSON()
+        }
+    } catch (error) {
+        console.log(error);
+        return {
+            message: 'Something wrong from server!',
+            code: -2,
+            data: ''
+        }
+    }
+}
+
+export async function deleteUser(id) {
+    try {
+        await db.User.destroy({
+            where: { id }
+        })
+
+        return {
+            message: 'Deleted user successfully',
+            code: 0,
+            data: ''
+        }
+    } catch (error) {
+        console.log(error);
+        return {
+            message: 'Something wrong from server!',
+            code: -2,
+            data: ''
+        }
+    }
+
+}
+
+// Group user
+
+export async function getGroupUsers() {
+    try {
+        const data = await db.Group_User.findAll({
+            raw: true
+        });
+        return {
+            message: 'Get all group user successfully',
+            code: 0,
+            data: data
+        }
+    } catch (error) {
+        console.log(error);
+        return {
+            message: 'Something wrong from server!',
+            code: -2,
+            data: ''
+        }
+    }
+}
