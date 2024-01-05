@@ -195,6 +195,49 @@ export async function createUser({ email, phone, username, address, password, ge
     }
 }
 
+export async function getUserById(id) {
+    try {
+        const res = await db.User.findOne({
+            where: { id },
+            attributes: { exclude: ['password'] }
+        })
+
+        return {
+            message: 'Get user successfully',
+            code: 0,
+            data: res
+        }
+    } catch (error) {
+        console.log(error);
+        return {
+            message: 'Something wrong from server!',
+            code: -2,
+            data: ''
+        }
+    }
+}
+
+export async function updateUser(id, userData) {
+    try {
+        await db.User.update(userData, {
+            where: { id }
+        })
+        return {
+            message: 'Update user successfully',
+            code: 0,
+            data: ''
+        }
+    } catch (error) {
+        console.log(error);
+        return {
+            message: 'Something wrong from server!',
+            code: -2,
+            data: ''
+        }
+    }
+}
+
+
 export async function deleteUser(id) {
     try {
         await db.User.destroy({

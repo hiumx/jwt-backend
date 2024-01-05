@@ -107,13 +107,50 @@ export async function createUser(req, res) {
     }
 }
 
-export function updateUser(req, res) {
 
+export async function getUserById(req, res) {
+    try {
+        const resData = await apiService.getUserById(req.params.id);
+        res.json({
+            responseMessage: resData.message,
+            responseCode: resData.code,
+            responseData: resData.data
+        });
+        
+    } catch (error) {
+        console.log(error);
+        res.json({
+            responseMessage: 'Something wrong from server...',
+            responseCode: -2,
+            responseData: ''
+        })
+    }
+}
+
+
+export async function updateUser(req, res) {
+    try {
+        console.log(req.params);
+        const resData = await apiService.updateUser(req.params.id, req.body);
+        res.json({
+            responseMessage: resData.message,
+            responseCode: resData.code,
+            responseData: resData.data
+        });
+        
+    } catch (error) {
+        console.log(error);
+        res.json({
+            responseMessage: 'Something wrong from server...',
+            responseCode: -2,
+            responseData: ''
+        })
+    }
 }
 
 export async function deleteUser(req, res) {
     try {
-        const resData = await apiService.deleteUser(req.body.id);
+        const resData = await apiService.deleteUser(req.params.id);
         res.json({
             responseMessage: resData.message,
             responseCode: resData.code,
