@@ -1,6 +1,9 @@
 import bcrypt from 'bcrypt';
-import db from '../db/models';
 import { Op } from 'sequelize';
+
+import db from '../db/models';
+import { getRolesByGroupId } from './jwtService';
+import { createToken } from '../middleware/JWTAuth';
 
 function hashPassword(password) {
     const saltRounds = 10;
@@ -9,35 +12,34 @@ function hashPassword(password) {
 }
 
 async function checkEmailExist(emailCheck) {
-    const email = await db.User.findOne({
+    const user = await db.User.findOne({
         raw: true,
         where: {
             email: emailCheck
         }
     })
-    return email ? true : false;
+    return user;
 }
 
 async function checkPhoneExist(phoneCheck) {
-    const phone = await db.User.findOne({
+    const user = await db.User.findOne({
         raw: true,
         where: {
             phone: phoneCheck
         }
     })
 
-    return phone ? true : false;
+    return user;
 }
 
 async function checkUsernameExist(usernameCheck) {
-    const username = await db.User.findOne({
+    const user = await db.User.findOne({
         raw: true,
         where: {
             username: usernameCheck
         }
     })
-
-    return username ? true : false;
+    return user;
 }
 
 export async function registerNewUser(data) {
@@ -64,7 +66,7 @@ export async function registerNewUser(data) {
     if (isUsernameExist) {
         return {
             message: 'Username already exists!',
-            code: -2,
+            code: -1,
             data: ''
         }
     }
@@ -125,10 +127,24 @@ export async function userLogin(data) {
         }
     }
 
+    console.log(userInstance.groupId);
+    const res = await getRolesByGroupId(userInstance.groupId);
+
+    const userData = res?.data;
+    const payload = {
+        email: userInstance.email,
+        userData
+    }
+
+    const accessToken = createToken(payload);
+
     return {
         message: 'Login successfully',
         code: 0,
-        data: ''
+        data: {
+            accessToken,
+            userData
+        }
     }
 }
 
@@ -170,6 +186,32 @@ export async function getUsers({ page, limit }) {
 
 export async function createUser({ email, phone, username, address, password, gender, groupId }) {
     try {
+        const isEmailExist = await checkEmailExist(email);
+        const isPhoneExist = await checkPhoneExist(phone);
+        const isUsernameExist = await checkUsernameExist(username);
+
+        if (isEmailExist) {
+            return {
+                message: 'Email already exists!',
+                code: -1,
+                data: ''
+            }
+        }
+        if (isPhoneExist) {
+            return {
+                message: 'Phone already sexists!',
+                code: -1,
+                data: ''
+            }
+        }
+        if (isUsernameExist) {
+            return {
+                message: 'Username already exists!',
+                code: -1,
+                data: ''
+            }
+        }
+
         const hashedPassword = hashPassword(password);
         const resData = await db.User.create({
             email,
@@ -219,6 +261,14 @@ export async function getUserById(id) {
 
 export async function updateUser(id, userData) {
     try {
+        const isUsernameExist = await checkUsernameExist(userData.username);
+        if (isUsernameExist) {
+            return {
+                message: 'Username already exists!',
+                code: -1,
+                data: ''
+            }
+        }
         await db.User.update(userData, {
             where: { id }
         })
@@ -281,3 +331,4 @@ export async function getGroupUsers() {
         }
     }
 }
+

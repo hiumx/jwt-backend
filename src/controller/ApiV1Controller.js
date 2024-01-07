@@ -130,7 +130,6 @@ export async function getUserById(req, res) {
 
 export async function updateUser(req, res) {
     try {
-        console.log(req.params);
         const resData = await apiService.updateUser(req.params.id, req.body);
         res.json({
             responseMessage: resData.message,
@@ -186,4 +185,3 @@ export async function getAllGroupUser(req, res) {
         })
     }
 }
-

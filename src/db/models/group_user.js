@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.User, {
         foreignKey: 'groupId'
       })
-      // this.belongsToMany(models.Role, { through: 'Group_Role' })
+      this.belongsToMany(models.Role, { through: 'Group_Role', foreignKey: 'groupId' })
     }
   }
   GroupUser.init({

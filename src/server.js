@@ -5,7 +5,7 @@ import cors from 'cors';
 
 import configViewEngine from "./config/viewEngine";
 import webRoutes from "./routes/web/web";
-import apiRouter from './routes/api/api'
+import apiRouter from './routes/api/api';
 
 const PORT = process.env.PORT || 8080;
 
@@ -15,7 +15,7 @@ var corsOptions = {
     origin: process.env.REACT_URL,
     optionsSuccessStatus: 200,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-}
+};
 
 app.use(cors(corsOptions))
 
