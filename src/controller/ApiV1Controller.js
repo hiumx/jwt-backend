@@ -43,6 +43,9 @@ export async function login(req, res) {
         }
 
         const resData = await apiService.userLogin(req.body);
+
+        res.cookie('jwtToken', resData.data.accessToken, { httpOnly: true, maxAge: 30000 * 10});
+
         res.json({
             responseMessage: resData.message,
             responseCode: resData.code,

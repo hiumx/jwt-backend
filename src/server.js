@@ -6,6 +6,7 @@ import cors from 'cors';
 import configViewEngine from "./config/viewEngine";
 import webRoutes from "./routes/web/web";
 import apiRouter from './routes/api/api';
+import cookieParser from "cookie-parser";
 
 const PORT = process.env.PORT || 8080;
 
@@ -15,6 +16,7 @@ var corsOptions = {
     origin: process.env.REACT_URL,
     optionsSuccessStatus: 200,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true
 };
 
 app.use(cors(corsOptions))
@@ -26,6 +28,8 @@ app.use(express.urlencoded({
 }));
 
 app.use(express.json());
+
+app.use(cookieParser());
 
 app.use(methodOverride('_method'));
 

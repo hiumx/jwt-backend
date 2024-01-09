@@ -3,12 +3,12 @@ import db from "../db/models";
 
 async function getRolesByGroupId(groupId) {
     try {
-        const data = await db.Group_User.findAll({
+        const data = await db.Group_User.findOne({
             where: { id: groupId },
             attributes: ['id', 'name', 'description'],
             include: {
                 model: db.Role,
-                attributes: ['id', 'url', 'description'],
+                attributes: ['id', 'url', 'method', 'description'],
                 through: { attributes: [] }
             }
         });

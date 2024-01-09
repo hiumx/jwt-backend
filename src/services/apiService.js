@@ -3,7 +3,7 @@ import { Op } from 'sequelize';
 
 import db from '../db/models';
 import { getRolesByGroupId } from './jwtService';
-import { createToken } from '../middleware/JWTAuth';
+import { createToken } from '../middleware/jwtAuth';
 
 function hashPassword(password) {
     const saltRounds = 10;
@@ -96,7 +96,7 @@ export async function registerNewUser(data) {
 
 }
 
-export async function userLogin(data) {
+export async function  userLogin(data) {
 
     const userInstance = await db.User.findOne({
         where: {
@@ -127,13 +127,13 @@ export async function userLogin(data) {
         }
     }
 
-    console.log(userInstance.groupId);
     const res = await getRolesByGroupId(userInstance.groupId);
 
     const userData = res?.data;
     const payload = {
+        username: userInstance.username,
         email: userInstance.email,
-        userData
+        userData,
     }
 
     const accessToken = createToken(payload);
@@ -143,6 +143,7 @@ export async function userLogin(data) {
         code: 0,
         data: {
             accessToken,
+            username: userInstance.username,
             userData
         }
     }
