@@ -7,12 +7,15 @@ const router = express.Router();
 router.post('/register', apiV1Controller.register);
 router.post('/login', apiV1Controller.login);
 
+router.get('/account', apiV1Controller.getInfoAccount);
+
 router.get('/users', authentication, authorization, apiV1Controller.getAllUsers);
 router.get('/users/:id', authentication, authorization, apiV1Controller.getUserById);
 router.post('/users', authentication, authorization, apiV1Controller.createUser);
 router.patch('/users/:id', authentication, authorization, apiV1Controller.updateUser);
 router.delete('/users/:id', authentication, authorization, apiV1Controller.deleteUser);
 
+// router.get('/manager-users', authentication, authorization, )
 //Group
 router.get('/group-user/all', apiV1Controller.getAllGroupUser);
 

@@ -1,5 +1,6 @@
 import e from 'express';
 import * as apiService from '../services/apiService';
+import { verifyToken } from '../middleware/jwtAuth';
 
 export async function register(req, res) {
     try {
@@ -188,3 +189,22 @@ export async function getAllGroupUser(req, res) {
         })
     }
 }
+
+
+export async function getInfoAccount(req, res) {
+    const userData = verifyToken(req.cookies.jwtToken);
+    if(userData) {
+        res.status(200).json({
+            responseMessage: 'Get info account successfully',
+            responseCode: 0,
+            responseData: userData
+        });
+    } else {
+        res.status(401).json({
+            responseMessage: 'Unauthentication',
+            responseCode: -1,
+            responseData: ''
+        })
+    }
+}
+

@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const createToken = (payload) => {
-    const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_KEY, { expiresIn: '10000s' });
+    const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_KEY, { expiresIn: '1h' });
     return accessToken;
 }
 
@@ -13,7 +13,8 @@ const verifyToken = (token) => {
         return jwt.verify(token, process.env.JWT_ACCESS_KEY);
     } catch (error) {
         console.log('Token invalid');
-        console.log(error);
+        // console.log(error);
+        return null;
     }
 }
 
