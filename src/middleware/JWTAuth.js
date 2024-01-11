@@ -12,14 +12,14 @@ const verifyToken = (token) => {
     try {
         return jwt.verify(token, process.env.JWT_ACCESS_KEY);
     } catch (error) {
-        console.log('Token invalid');
+        // console.log('Token invalid');
         // console.log(error);
         return null;
     }
 }
 
 const authentication = (req, res, next) => {
-    const token = req.cookies.jwtToken;
+    const token = req.headers.authorization.split(" ")[1];
     if (token) {
         req.userToken = token;
         next();

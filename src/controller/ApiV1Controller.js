@@ -45,8 +45,6 @@ export async function login(req, res) {
 
         const resData = await apiService.userLogin(req.body);
 
-        res.cookie('jwtToken', resData.data.accessToken, { httpOnly: true, maxAge: 30000 * 10});
-
         res.json({
             responseMessage: resData.message,
             responseCode: resData.code,
@@ -192,7 +190,8 @@ export async function getAllGroupUser(req, res) {
 
 
 export async function getInfoAccount(req, res) {
-    const userData = verifyToken(req.cookies.jwtToken);
+    const jwtToken = req.headers.authorization?.split(" ")[1];
+    const userData = verifyToken(jwtToken);
     if(userData) {
         res.status(200).json({
             responseMessage: 'Get info account successfully',
